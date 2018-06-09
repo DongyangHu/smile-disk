@@ -1,0 +1,18 @@
+<table class="table table-hover table-common">
+	<thead>
+		<tr>
+			<td>userId</td>
+			<td>userCode</td>
+			<td>userName</td>
+			<td>userPassword</td>
+		</tr>
+	</thead>
+	<tbody>
+		<tr v-for="userInfo in dataList">
+			<td>{{userInfo.userId}}</td>
+			<td>{{userInfo.userCode}}</td>
+			<td>{{userInfo.userName}}</td>
+			<td>{{userInfo.userPassword}}</td>
+		</tr>
+	</tbody>
+</table>

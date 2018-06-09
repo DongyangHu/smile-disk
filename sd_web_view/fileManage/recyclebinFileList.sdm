@@ -1,0 +1,40 @@
+<table class="table table-hover">
+	<thead>
+		<tr class="active">
+			<th width="4%"><input type="checkbox" onclick="selectAll(this);"></th>
+			<th width="40%">文件名</th>
+			<th width="16%"></th>
+			<th width="15%">大小</th>
+			<th width="25%">创建时间</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr v-for="file in fileList">
+			<td><input type="checkbox" name="fileBox" v-bind:value="file.fileId"></td>
+			<td v-if="file.fileType == 1">
+				<i class="layui-icon">&#xe6ed;&nbsp;&nbsp;</i>{{file.fileLable}}
+			</td>
+			<td v-else-if="file.fileType == 2">
+				<i class="layui-icon">&#xe6fc;&nbsp;&nbsp;</i>{{file.fileLable}}
+			</td>
+			<td v-else-if="file.fileType == 3">
+				<i class="layui-icon">&#xe705;&nbsp;&nbsp;</i>{{file.fileLable}}
+			</td>
+			<td class="cursor-pointer" v-else-if="file.fileType == 4" v-on:click="showImg(file.fileId)">
+				<i class="layui-icon">&#xe64a;&nbsp;&nbsp;</i>{{file.fileLable}}
+			</td>
+			<td v-else>
+				<i class="layui-icon">&#xe621;&nbsp;&nbsp;</i>{{file.fileLable}}
+			</td>												
+			<td>
+				<i class="layui-icon cursor-pointer" title="恢复" v-on:click="recoveryFile(file.fileId)">&#x1002;</i>
+			</td>								
+			<td>{{file.fileSize}}</td>
+			<td>{{file.crtime.time}}</td>
+		</tr>
+	</tbody>
+</table>
+
+
+
+

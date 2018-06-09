@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+     <typeHandlers>
+          <typeHandler handler="com.sd.common.time.SdTime2TimestampTypeHandler"/>
+          <typeHandler handler="com.sd.common.time.SdDate2TimestampTypeHandler"/>
+     </typeHandlers>
+     <mappers>
+        <mapper resource="sqlMap/sdPageQueryBase.xml"/>
+        <mapper resource="sqlMap/sysInfo.xml"/>
+        <mapper resource="sqlMap/userInfo.xml"/>
+        <mapper resource="sqlMap/notice.xml"/>
+        <mapper resource="sqlMap/friend.xml"/>
+     </mappers>
+ </configuration>

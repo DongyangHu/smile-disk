@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="friend" >
+    
+    <!-- 好友 -->
+    <sql id="friendSql">
+        select 
+               t2.user_id         friendId, 
+               t2.user_code       friendCode, 
+               t2.user_nikename   friendName  
+        from sd_friend_relationship t1, sd_sys_user t2  
+        where 1=1          
+    </sql>
+    <!-- 好友申请 -->
+    <sql id="friendApplySql">
+        select 
+               t2.user_id         friendId, 
+               t2.user_code       friendCode, 
+               t2.user_nikename   friendName,
+               t1.result          result,   
+               t1.apply_id        applyId  
+        from sd_friend_apply t1, sd_sys_user t2  
+        where 1=1            
+    </sql>
+    
+    <!-- 全部好友列表 -->
+    <select id="getAllFriendList" parameterType="java.lang.String" resultType="com.sd.baseData.bean.SdFriendInfoBean"> 
+        <include refid="friendSql"/>
+        and t1.friend_id = t2.user_id  
+        and t1.user_id = #{userId}
+        order by t1.crtime desc 
+    </select>
+    <!-- 好友列表 -->
+    <select id="getFriendList" parameterType="java.util.HashMap" resultType="com.sd.baseData.bean.SdFriendInfoBean"> 
+        <include refid="friendSql"/>
+        and t1.friend_id = t2.user_id  
+        and t1.user_id = #{userId}
+        order by t1.crtime desc 
+        <include refid="pageQueryBase.pageAttrSql"/>
+    </select>
+    <!-- 好友列表总数 -->
+    <select id="getFriendListCount" parameterType="java.util.HashMap" resultType="java.lang.Integer"> 
+        select count(1) from (
+            <include refid="friendSql"/>
+                and t1.friend_id = t2.user_id  
+                and t1.user_id = #{userId}
+            ) A
+    </select>
+    
+    
+    <!-- 好友申请列表 -->
+    <select id="getFriendApplyList" parameterType="java.util.HashMap" resultType="com.sd.baseData.bean.SdFriendApplyReturnBean"> 
+        <include refid="friendApplySql"/>
+        and t1.send_user_id = t2.user_id  
+        and t1.receive_user_id = #{userId}
+        order by t1.crtime desc 
+        <include refid="pageQueryBase.pageAttrSql"/>
+    </select>
+    <!-- 好友申请列表总数 -->
+    <select id="getFriendApplyListCount" parameterType="java.util.HashMap" resultType="java.lang.Integer"> 
+        select count(1) from (
+            <include refid="friendApplySql"/>
+                and t1.send_user_id = t2.user_id  
+                and t1.receive_user_id = #{userId}
+            ) A
+    </select>
+    
+    <!-- 删除好友 -->
+    <delete id="deleteFriendById" parameterType="java.util.HashMap">
+        delete from sd_friend_relationship where user_id = #{userId} and friend_id = #{friendId} 
+    </delete>
+    
+    <!-- 添加好友申请 -->
+    <insert id="sendFriendApply" parameterType="com.sd.baseData.bean.SdFriendApplyInfoBean">
+        insert into sd_friend_apply(apply_id,send_user_id,receive_user_id,crtime) 
+        values(#{applyId},#{sendUserId},#{receiveUserId},#{crtime}) 
+    </insert>
+    
+    <!-- 处理好友申请 -->
+    <update id="updateFriendApply" parameterType="java.util.HashMap">
+        update sd_friend_apply set result = #{result}, handle_time = #{handleTime} 
+        where apply_id = #{applyId} 
+    </update>
+    
+    <!-- 添加好友对应关系 -->
+    <insert id="insertFriendRelationship" parameterType="java.util.HashMap">
+        insert into sd_friend_relationship values(#{userId},#{friendId},#{crtime}) 
+    </insert>
+</mapper>

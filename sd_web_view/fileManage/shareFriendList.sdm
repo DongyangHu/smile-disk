@@ -1,0 +1,18 @@
+<table class="table table-hover">
+	<thead>
+		<tr class="active">
+			<td width="40%">昵称</td>
+			<td width="40%">用户编码</td>
+			<td width="20%">选择</td>
+		</tr>
+	</thead>
+	<tbody>
+		<tr v-for="friend in friendList">
+			<td>{{friend.friendName}}</td>
+			<td>{{friend.friendCode}}</td>
+			<td>
+				<input type="checkbox" name="friendBox" v-bind:value="friend.friendId">
+			</td>
+		</tr>
+	</tbody>
+</table>

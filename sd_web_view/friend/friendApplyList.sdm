@@ -1,0 +1,26 @@
+<table class="table table-hover">
+	<thead>
+		<tr class="active">
+			<td width="35%">昵称</td>
+			<td width="35%">用户编码</td>
+			<td width="30%">操作</td>
+		</tr>
+	</thead>
+	<tbody>
+		<tr v-for="apply in friendApplyList">
+			<td>{{apply.friendName}}</td>
+			<td>{{apply.friendCode}}</td>
+			<td v-if="apply.result == 0">
+				<i class="layui-icon cursor-pointer" title="同意" v-on:click="handleFriendApply(apply.applyId,1,apply.friendId)">&#xe6af;</i>
+				&nbsp;&nbsp;
+				<i class="layui-icon cursor-pointer" title="拒绝" v-on:click="handleFriendApply(apply.applyId,2,apply.friendId)">&#x1006;</i>
+			</td>
+			<td v-if="apply.result == 1">
+				<span class="text-primary">已同意</span>
+			</td>
+			<td v-if="apply.result == 2">
+				<span class="text-danger">已拒绝</span>
+			</td>			
+		</tr>
+	</tbody>
+</table>

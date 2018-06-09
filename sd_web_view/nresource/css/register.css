@@ -1,0 +1,27 @@
+.register-title-logo{
+	text-align: center;
+	font-size: 24px;
+	color: #999999;
+	background: url(/nresource/img/logo1-20x20.png) no-repeat center left;
+}
+.register-input-group{
+	margin: 10px 100px;
+}
+.register-input-group-main{
+	margin: 10px auto;
+	width: 260px;
+}
+.register-input-group-main-right{
+	border: 1px solid #4CAE4C;
+}
+.register-input-group-main-error{
+	border: 1px solid #FD482C;
+}
+.register-input-group-massage{
+	width: 240px;
+	margin: 10px auto;
+}
+.register-input-group-massage span{
+	color: #777777;
+	font-size: 12px;
+}

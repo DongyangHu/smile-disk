@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>邮箱校验</title>
+		<!--#include file="/pub-page/sd_load_js.html" -->
+	</head>
+	<body>
+		<div style=" margin: 0 auto; width:600px; height: 240px; background-color:#FFF; border:1px solid #dcdddd;border-bottom:none; box-shadow: -3px 0 10px #eaebec,0 0px 0 #FFF,0 0px 0 #FFF, 3px 0 10px #eaebec;">
+			<table border="0" >
+				<tbody>
+					<tr>
+						<td style="border-bottom:1px dotted #e5e5e5;padding: 0; width: 590px;">
+							<h3 style="color: #00bff3; font-size: 18px; margin-left: 5px;">Smile Disk</h3>
+						</td>
+					</tr>
+					<tr>
+						<td style="border-bottom:1px dotted #e5e5e5;padding:10px 0; width: 590px;">
+							<p id="checkSuccess" style="color:#000000; font-size:14px;line-height:24px;margin:5px;padding:0; display:none;">
+								邮箱校验成功，页面将在5秒后自动跳转到Smile Disk主页。<br/>
+								如未跳转，请<a href="/sysman/login.html" style="color:#00bff3;">点击链接</a>手动进入页面。
+							</p>
+							<p id="outOfTime" style="color:#000000; font-size:14px;line-height:24px;margin:5px;padding:0; display:none;">
+								<span style="color:#ff3000;">邮箱校验链接已经超时，请重新注册。</span>页面将在5秒后自动跳转到Smile Disk主页。<br/>
+								如未跳转，请<a href="/sysman/login.html" style="color:#00bff3;">点击链接</a>手动进入页面。
+							</p>
+							<p id="errorLink" style="color:#000000; font-size:14px;line-height:24px;margin:5px;padding:0; display:none;">
+								<span style="color:#ff3000;">错误的校验链接。</span>页面将在5秒后自动跳转到Smile Disk主页。<br/>
+								如未跳转，请<a href="/sysman/login.html" style="color:#00bff3;">点击链接</a>手动进入页面。
+							</p>
+						</td>
+					</tr>
+					<tr>
+						<td style="border-bottom:1px dotted #e5e5e5;padding:10px 0; width: 590px;">
+							<p style="font-size:12px;line-height:22px;color:#848383;margin:0;padding:0;">
+								感谢您注册Smile Disk，我们将带给您自由、清新、方便、快捷的体验<br>
+								<span style="color:#ff3000;">请合理使用网盘资源，严格遵守国家法律法规。</span>
+							</p>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</body>
+	<script type="text/javascript">
+		$(function(){
+			require(['uri','ajaxUtil'],function(uri,ajaxUtil){
+				var url = '/sd_baseData/userInfo/checkEmail';
+				
+				var urlObj = new uri(location.href);
+				var registerId = urlObj.getQueryParamValue("registerId");
+				var userCode = urlObj.getQueryParamValue("userCode");
+				var userEmail = urlObj.getQueryParamValue("userEmail");
+				var checkCode = urlObj.getQueryParamValue("checkCode");
+				
+				var parms = '?registerId=' + registerId + '&userCode=' + userCode + '&userEmail=' + userEmail + '&checkCode=' + checkCode;
+				var ajaxUrl = url + parms;
+				ajaxUtil.doGet(ajaxUrl,function(data){
+					var type = data.code;
+					if(type == 0){
+						$("#checkSuccess").css('display','');
+						window.setTimeout("window.location.replace('/sysman/login.html')",5000);
+					}
+					if(type == 1){
+						$("#outOfTime").css('display','');
+						window.setTimeout("window.location.replace('/sysman/login.html')",5000);
+					}
+					if(type == 2){
+						$("#errorLink").css('display','');
+						window.setTimeout("window.location.replace('/sysman/login.html')",5000);
+					}
+				});
+			});
+		});
+	</script>
+</html>

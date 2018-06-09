@@ -1,0 +1,18 @@
+<table class="table table-hover">
+	<thead>
+		<tr class="active">
+			<td width="35%">昵称</td>
+			<td width="35%">用户编码</td>
+			<td width="30%">操作</td>
+		</tr>
+	</thead>
+	<tbody>
+		<tr v-for="friend in friendList">
+			<td>{{friend.friendName}}</td>
+			<td>{{friend.friendCode}}</td>
+			<td>
+				<i class="layui-icon cursor-pointer" title="删除好友" v-on:click="deleteFriend(friend.friendId)">&#xe640;</i>
+			</td>
+		</tr>
+	</tbody>
+</table>

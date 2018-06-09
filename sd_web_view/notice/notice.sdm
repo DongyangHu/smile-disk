@@ -1,0 +1,25 @@
+<table class="table table-hover">
+	<thead>
+		<tr class="active">
+			<th width="4%">状态</th>
+			<th width="59%">标题</th>
+			<th width="37%">创建时间</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr v-for="notice in noticeList" class="cursor-pointer" v-on:click="showNotice(notice.noticeId,notice.noticeTitle,notice.noticeContent,notice.status,notice.crtime.time)">
+			<td v-if="notice.status == 0">
+				<i class="layui-icon" title="未读">&#x1006;</i>
+			</td>
+			<td v-else>
+				<i class="layui-icon" title="已读">&#xe618;</i>
+			</td>			
+			<td>
+				<i class="layui-icon">&#xe63a;&nbsp;&nbsp;</i>{{notice.noticeTitle}}
+			</td>
+			<td>
+				{{notice.crtime.time}}
+			</td>
+		</tr>
+	</tbody>
+</table>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="sysInfo" >
+    <!-- 数据库表序列 -->
+    <select id="getMaxSeq" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+        ${maxSeqSql}
+    </select>
+    <!-- 获取角色模块映射表中全部的角色Id -->
+    <select id="getAllRoleId" resultType="java.lang.String">
+        select role_id from sd_sys_role_module group by role_id
+    </select>
+    <!-- 根据角色id获取角色对应的模块信息 -->
+    <select id="getRoleModuleById" parameterType="java.lang.String" resultType="java.lang.String">
+        select module_id from sd_sys_role_module where role_id = #{roleId}
+    </select>
+    <select id="getAllModule" resultType="com.sd.baseData.bean.SdModuleInfoBean">
+        select 
+              module_id            moduleId,
+              module_name          moduleName,
+              module_status        moduleStatus,
+              module_path_id       modulePathId,
+              module_url           moduleUrl,
+              module_parent_id     moduleParentId,
+              module_orderby       moduleOrderby 
+        from sd_sys_module t where t.module_status = 1
+    </select>
+    
+</mapper>

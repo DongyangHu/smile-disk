@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>文件上传</title>
+		<!--#include file="/pub-page/sd_load_js.html" -->
+		<!--#include file="/pub-page/sd_load_css.html" -->		
+	</head>
+	<body>
+		<div class="container-fluid">
+			<div class="row mgt-10">
+				<div class="col-md-12 col-sm-12 col-xs-12">
+					<p class="text-primary mgb-5">请选择需要上传的文件，文件大小最大为500Mb.</p>
+					<input type="file" name="fileBox" id="fileBox" style="display:none;"/>
+					<button class="layui-btn layui-btn-sm" id="selectFile">
+						<i class="layui-icon">&#xe608;&nbsp;选择文件</i>
+					</button>
+					<button class="layui-btn layui-btn-sm" id="uploadFile">
+						<i class="layui-icon">&#xe681;&nbsp;上传</i>
+					</button>
+				</div>
+			</div>
+			<hr />
+			<div class="row mgt-10">
+				<div class="col-md-12 col-sm-12 col-xs-12">
+					<div class="layui-progress layui-progress-big layui-hide" id="uploadProgress" lay-showPercent="yes" lay-filter="uploadProgressFilter">
+		  				<div class="layui-progress-bar" lay-percent="0%"></div>
+					</div>
+				</div>
+			</div>
+			<div class="row mgt-10">
+				<div class="col-md-12 col-sm-12 col-xs-12">
+					<table class="table table-hover">
+						<thead>
+							<tr class="active">
+								<td>文件名</td>
+								<td>文件类型</td>
+								<td>文件大小</td>
+							</tr>
+						</thead>
+						<tbody id="fileDetails">
+							
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			//文件大小限制
+			var fileMaxSize = 524288000;
+			//各种文件后缀
+			//1：视频，2：音乐，3：文档，4：图片，0：其他
+			var vedioType = ['mp4','avi','flv','3gp','rmvb','wmv','MP4','AVI','FLV','3GP','RMVB','WMV'];
+			var musicType = ['mp3','wma','aac','MP3','WMA','AAC'];
+			var docType = ['doc','docx','ppt','pptx','xls','xlsx','pdf','txt','DOC','DOCX','PPT','PPTX','XLS','XLSX','PDF','TXT'];
+			var imgType = ['jpg','jpge','bmp','png','gif','JPG','JPGE','BMP','PNG','GIF'];
+			var layuiElement;
+			var layuiLayer;
+			var uploadIndex;
+			var uploadedFlag = false;
+			
+			//使用element
+			layui.use(['element','layer'], function(){
+  				layuiElement = layui.element;
+  				layuiLayer = layui.layer;
+			});
+			
+			//初始化页面
+			$(function(){
+				//文件选择
+				$("#selectFile").click(function(){
+					$("#fileBox").trigger("click");
+				});
+				$("#fileBox").change(function(){
+					var file = $("#fileBox")[0].files[0];
+					var fileName = file.name;
+					var fileType = getFileType(fileName);
+					var fileSize = file.size;
+					if(!checkFileSize()){
+						$("#fileBox").val('');
+						$("#fileDetails").html('');
+						return;
+					}
+					var fileSizeView = (fileSize / 1024).toFixed(2) + 'Kb';
+        			//1：视频，2：音乐，3：文档，4：图片，0：其他
+        			var fileDetails = '';
+        			switch (fileType){
+        				case 0:
+        					fileDetails += "<tr>";
+        					fileDetails += "<td><i class='layui-icon'>&#xe621;&nbsp;&nbsp;</i>"+ fileName +"</td>";
+        					fileDetails += "<td>其他文件</td>";
+        					fileDetails += "<td>"+ fileSizeView +"</td>";
+        					fileDetails += "</tr>";
+        					break;
+        				case 1:
+        					fileDetails += "<tr>";
+        					fileDetails += "<td><i class='layui-icon'>&#xe6ed;&nbsp;&nbsp;</i>"+ fileName +"</td>";
+        					fileDetails += "<td>视频</td>";
+        					fileDetails += "<td>"+ fileSizeView +"</td>";
+        					fileDetails += "</tr>";
+        					break;
+        				case 2:
+        					fileDetails += "<tr>";
+        					fileDetails += "<td><i class='layui-icon'>&#xe6fc;&nbsp;&nbsp;</i>"+ fileName +"</td>";
+        					fileDetails += "<td>音乐</td>";
+        					fileDetails += "<td>"+ fileSizeView +"</td>";
+        					fileDetails += "</tr>";
+        					break;
+        				case 3:
+        					fileDetails += "<tr>";
+        					fileDetails += "<td><i class='layui-icon'>&#xe705;&nbsp;&nbsp;</i>"+ fileName +"</td>";
+        					fileDetails += "<td>文档</td>";
+        					fileDetails += "<td>"+ fileSizeView +"</td>";
+        					fileDetails += "</tr>";
+        					break;
+        				case 4:
+        					fileDetails += "<tr>";
+        					fileDetails += "<td><i class='layui-icon'>&#xe64a;&nbsp;&nbsp;</i>"+ fileName +"</td>";
+        					fileDetails += "<td>图片</td>";
+        					fileDetails += "<td>"+ fileSizeView +"</td>";
+        					fileDetails += "</tr>";
+        					break;
+        				default:
+        					break;
+        			}
+        			$("#fileDetails").html(fileDetails);
+				});
+				//上传
+				$("#uploadFile").click(function(){
+					upladFile();
+				});
+			});
+			/**
+			 * 
+			 * @param {String} fileName
+			 * 1：视频，2：音乐，3：文档，4：图片，0：其他
+			 */
+			function getFileType(fileName){
+                var tmpArray = fileName.split(".");
+                var fileType = tmpArray[tmpArray.length - 1];
+                //是否是视频
+                for(var i = 0; i < vedioType.length; i++){
+                	if(fileType == vedioType[i]){
+                		return 1;
+                	}
+                }
+                //是否是音乐
+                for(var i = 0; i < musicType.length; i++){
+                	if(fileType == musicType[i]){
+                		return 2;
+                	}
+                }
+                //是否是文档
+                for(var i = 0; i < docType.length; i++){
+                	if(fileType == docType[i]){
+                		return 3;
+                	}
+                }
+                //是否是图片
+                for(var i = 0; i < imgType.length; i++){
+                	if(fileType == imgType[i]){
+                		return 4;
+                	}
+                }
+                //其他
+                return 0;
+			}
+			function upladFile() {
+				//是否已经上传
+				if(uploadedFlag){
+					layuiLayer.alert("请不要多次上传", {icon: 5});
+					return;
+				}
+				//是否选择文件
+				if(!checkFileEmpty()){
+					return;
+				}
+				//校验文件大小
+				if(!checkFileSize()){
+					$("#fileBox").val('');
+					$("#fileDetails").html('');
+					return;
+				}
+				uploadIndex = layuiLayer.load(1, {
+  					shade: [0.1,'#fff'] //0.1透明度的白色背景
+				});
+	            var url = "/sd_fm/mvc/fileUpload/upload?dirId=" + parent.parentDirId;
+				var uploadData = new FormData;
+				uploadData.append("file",$("#fileBox")[0].files[0]);
+				
+	            // XMLHttpRequest 对象
+	            var xhr = new XMLHttpRequest();
+	            xhr.open("post", url, true);
+	            xhr.onload = function () {
+	               // alert("上传完成!");
+	            };
+	
+	            xhr.upload.addEventListener("progress", progressFunction, false);
+	            xhr.send(uploadData);
+	        }
+	
+	        function progressFunction(evt) {
+	            if (evt.lengthComputable) {
+	            	$("#uploadProgress").removeClass('layui-hide');
+	                layuiElement.progress('uploadProgressFilter',Math.round(evt.loaded / evt.total * 100) + "%");
+	                if(evt.loaded==evt.total){
+	                	layuiLayer.close(uploadIndex);
+	                	uploadedFlag = true;
+	        			layuiLayer.alert("上传完成",{
+	        				icon: 1,
+	        				end: function (){
+	        					window.parent.search(1);
+	        					window.parent.layer.closeAll();
+	        				}
+	        			});
+	                }
+	            }
+	        }
+	        function checkFileSize(){
+        		var size = $("#fileBox")[0].files[0].size;
+        		if(size > fileMaxSize){
+        			layui.use('layer',function(){
+        				var layer = layui.layer;
+        				layer.alert("文件大小超过限制，只能上传500Mb以内的文件",{icon: 2});
+        			});
+        			return false;
+        		}
+        		return true;
+        	}
+	        function checkFileEmpty(){
+	        	var fileValue = $("#fileBox").val();
+	        	if(null == fileValue || '' == fileValue || 'undefined' == typeof(fileValue)){
+        			layuiLayer.alert("请选择需要上传的文件",{icon: 2});
+        			return false;
+	        	}
+	        	return true;
+	        }
+		</script>
+	</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Smile Disk Welcome</title>
+		<!--#include file="/pub-page/sd_load_js.html" -->
+		<!--#include file="/pub-page/sd_load_css.html" -->
+		<script type="application/javascript" src="/appframe/component/open/jsencrypt.min.js"></script>
+		<script type="application/javascript" src="/appframe/component/private/sdRSAEncrypt.js"></script>
+		<script type="application/javascript" src="/nresource/js/login.js"></script>
+		<link rel="stylesheet" href="/nresource/css/login.css" />
+	</head>
+	<body>
+		<!-- 顶部容器 -->
+		<div id="login-container" class="login-container">
+			<div class="bg bg-index-banner1" id="bg-banner-img"></div>
+			
+			<!-- 轮播图原点 -->
+			<div class="focus">
+				<ul class="focus-ul" style="z-index: 9;">
+					<li class="focus-ul-item"><a id="focus-item1" class="focus-a current" hidefocus="true" href="javascript:goNavNum(1);"></a></li>
+					<li class="focus-ul-item"><a id="focus-item2" class="focus-a" hidefocus="true" href="javascript:goNavNum(2);" ></a></li>
+					<li class="focus-ul-item"><a id="focus-item3" class="focus-a" hidefocus="true" href="javascript:goNavNum(3);" ></a></li>
+				</ul>
+			</div>
+			<!-- 头部横条 -->
+			<div class="header-container">
+				<div class="header-login">
+					<div class="logo" id="logoImg">
+						<a href="javascript:void(0);" onclick="location.reload();" target="_self" title="Smile Disk">Smile Disk</a>
+					</div>
+					<span style="float: right;">
+
+					</span>
+				</div>
+			</div>
+			<!-- 登录主体 -->
+			<div class="login-main">
+				<div class="bg-index-banner" id="bg-index-banner1">
+					<div class="index-body-content">
+						<p><span class="left-quote"></span><span id="indexShowMessageTop1">安全存储</span></p>
+						<p><span id="indexShowMessageButtom1">生活井井有条</span><span class="right-quote"></span></p>
+					</div>
+				</div>
+				<div class="bg-index-banner" id="bg-index-banner2" hidden="hidden">
+					<div class="index-body-content">
+						<p><span class="left-quote"></span><span id="indexShowMessageTop2">极速下载</span></p>
+						<p><span id="indexShowMessageButtom2">幸福不需等待</span><span class="right-quote"></span></p>
+					</div>
+				</div>
+				<div class="bg-index-banner" id="bg-index-banner3" hidden="hidden">
+					<div class="index-body-content">
+						<p><span class="left-quote"></span><span id="indexShowMessageTop3">好友互动</span></p>
+						<p><span id="indexShowMessageButtom3">共享快乐时光</span><span class="right-quote"></span></p>
+					</div>
+				</div>				
+				<!-- 登录表单 -->
+				<div class="login-form">
+					<div class="login-form-content">
+						<div class="login-form-title">
+							<h4 id="loginTitleH4">帐号密码登录</h4>
+						</div>
+						<div class="login-main-form">
+						    <div class="input-group">
+						        <span class="input-group-addon"><img src="/nresource/img/user.png"/></span>
+						        <input type="text" id="userAccountText" class="form-control" placeholder="请输入账号">
+						    </div>
+						    <div class="input-group mgt-20">
+						        <span class="input-group-addon"><img src="/nresource/img/pwd.png"/></span>
+						        <input type="password" id="userPasswordText" class="form-control" placeholder="请输入密码">
+						    </div>
+						    <div class="btn-group mgt-30">
+								<button type="button" class="btn btn-default btn-xs" id="languageType">中文</button>
+								<button type="button" class="btn btn-default dropdown-toggle btn-xs" data-toggle="dropdown">
+									<span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu" role="menu">
+									<li><a href="javascript:void(0);" onclick="changeLang('zh_CN');">中文</a></li>
+									<li><a href="javascript:void(0);" onclick="changeLang('en_US');">English</a></li>
+								</ul>
+							</div>
+							<a href="javascript:void(0);" class="mgl-20 mgt-30 login-main-form-a" id="register" onclick="showRegister();">立即注册</a>
+							<a href="javascript:void(0);" class="mgl-20 mgt-30 login-main-form-a1" id="forgetPwd" onclick="showFindPwd();">忘记密码?</a>
+						    <div class="form-group mgt-20">
+						    	<button type="button" class="btn btn-primary form-control" id="loginButton" onclick="login();">登录</button>
+						    </div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="atr-message">
+			<ul class="atr-message-ul">
+				<li id="atrMessageLi1">友情链接:</li>
+				<li>
+					<a href="http://blog.csdn.net/hu_dongyang" target="_blank" id="atrMessageLi2">我的博客</a>
+				</li>
+				<li>
+					<a href="http://www.sanxiau.edu.cn" target="_blank" id="atrMessageLi3">重庆三峡学院</a>
+				</li>
+				<li>
+					<a href="https://www.aliyun.com/" target="_blank" id="atrMessageLi4">阿里云</a>
+				</li>
+				<li>
+					<a href="http://requirejs.org/" target="_blank">RequireJS</a>
+				</li>
+				<li>
+					<a href="http://www.bootcss.com/" target="_blank">BootStrap</a>
+				</li>
+				<li>
+					<a href="https://cn.vuejs.org/" target="_blank">Vue.js</a>
+				</li>
+				<li>
+					<a href="http://jquery.cuishifeng.cn/" target="_blank">JQuery API</a>
+				</li>
+				<li>
+					<a href="https://daneden.github.io/animate.css/" target="_blank">Animate.css</a>
+				</li>
+			</ul>
+		</div>
+		<div class="footer">
+			<div class="mgb-5">
+				(c) Copyright 2017 HuDongyang, ShiMengxuan. All Rights Reserved. 
+				<a href="http://www.miitbeian.gov.cn/" target="_blank">渝ICP备17006557号</a>
+			</div>
+			<div>该网站仅用于个人学习测试使用，不进行任何形式的商业用途.</div>
+		</div>
+	</body>
+</html>

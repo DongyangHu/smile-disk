@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="userInfo" >
+    <!-- 用户表中用户记录数 -->
+    <select id="checkUserCodeUnique" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(1) from sd_sys_user where user_code = #{user_code}
+    </select>
+    <select id="checkUserCodeUniqueRegister" parameterType="java.lang.String" resultType="java.lang.Integer">
+        select count(1) from sd_sys_register where user_code = #{user_code}
+    </select>
+    
+    <sql id="userInfoSql">
+        select  
+              user_id           userId,
+              user_code         userCode,
+              user_nikename     userNikename,
+              user_gender       userGender,
+              user_password     userPassword,
+              user_email        userEmail,
+              user_status       userStatus,
+              user_headimg_url  userHeadimgUrl,
+              crtime            crtime
+        from sd_sys_user t where 1=1 
+    </sql>
+    
+    <!-- 所有用户信息列表 -->
+    <select id="getAllUserInfoList" resultType="com.sd.baseData.bean.SdUserInfoBean"> 
+        <include refid="userInfoSql"></include>
+    </select>
+    <!-- 所有用户信息列表 -->
+    <select id="getUserInfoList" resultType="com.sd.baseData.bean.SdUserInfoBean"> 
+        <include refid="userInfoSql"></include>
+        and t.user_code != 'admin'
+        <include refid="pageQueryBase.pageAttrSql"/>
+    </select>
+    <!-- 所有用户信息列表条数 -->
+    <select id="getUserInfoListCount" resultType="java.lang.Integer"> 
+        select count(1) from (
+	        <include refid="userInfoSql"></include>
+        ) A3 
+    </select>
+    
+    
+    <!-- 保存用户注册信息 -->
+    <insert id="saveUserRegisterInfo" parameterType="java.util.HashMap">
+        insert into sd_sys_register (register_id,user_code,user_password,user_email,invalid_time,check_code) 
+        values(#{registerId},#{userCode},#{userPassword},#{userEmail},#{invalidTime},#{checkCode})
+    </insert>
+    <!-- 根据参数查询用户注册信息 -->
+    <select id="getUserRegisterInfoByParam" resultType="com.sd.baseData.bean.SdUserRegisterBean"> 
+        select register_id      registerId,
+	           user_code        userCode,
+	           user_password    userPassword,
+	           user_email       userEmail,
+	           invalid_time     invalidTime,
+	           check_code       checkCode
+        from sd_sys_register t 
+        where 1=1 
+    <if test="@com.sd.common.sqlutil.SdOgnl@isNotEmpty(registerId)">
+        and  t.register_id = #{registerId}  
+    </if>
+    <if test="@com.sd.common.sqlutil.SdOgnl@isNotEmpty(userCode)">
+        and  t.user_code = #{userCode}  
+    </if>
+    <if test="@com.sd.common.sqlutil.SdOgnl@isNotEmpty(userEmail)">
+        and  t.user_email = #{userEmail}  
+    </if>
+    <if test="@com.sd.common.sqlutil.SdOgnl@isNotEmpty(checkCode)">
+        and  t.check_code = #{checkCode}  
+    </if>
+    </select>
+    <!-- 根据ID删除注册信息 -->
+    <delete id="deleteUserRegisterInfoById" parameterType="java.lang.String">
+        delete from sd_sys_register where register_id = #{registerId} 
+    </delete>
+    <!-- 保存用户信息到用户表 -->
+    <insert id="saveUserInfo" parameterType="com.sd.baseData.bean.SdUserInfoBean">
+        insert into sd_sys_user (user_id,user_code,user_nikename,user_gender,user_password,user_email,user_status,user_headimg_url,crtime)
+        values (#{userId},#{userCode},#{userNikename},#{userGender},#{userPassword},#{userEmail},#{userStatus},#{userHeadimgUrl},#{crtime}) 
+    </insert>
+    <!-- 单个用户信息 -->
+    <select id="getUserInfoByParams" parameterType="java.util.HashMap" resultType="com.sd.baseData.bean.SdUserInfoBean"> 
+        <include refid="userInfoSql"></include>
+        <if test="@com.sd.common.sqlutil.SdOgnl@isNotEmpty(userCode)">
+            and  t.user_code = #{userCode}  
+        </if>
+        <if test="@com.sd.common.sqlutil.SdOgnl@isNotEmpty(userId)">
+            and  t.user_id = #{userId}  
+        </if>
+    </select>
+    <!-- 设置密码 -->
+    <update id="updateUserInfo" parameterType="java.util.HashMap">
+        update sd_sys_user set 
+        <if test="@com.sd.common.sqlutil.SdOgnl@isNotEmpty(userPwd)">
+            user_password = #{userPwd}  
+        </if>
+            
+        where 1=1 
+        and user_code = #{userCode} 
+    </update>
+    
+    <!-- 更改用户状态 -->
+    <update id="changeUserStatus" parameterType="java.util.HashMap">
+        update sd_sys_user set user_status = #{status}   
+        where 1=1 
+        and user_id = #{userId} 
+    </update>
+    
+    
+    
+</mapper>

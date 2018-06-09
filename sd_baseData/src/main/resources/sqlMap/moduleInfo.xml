@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="moduleInfo" >
+
+    <!-- 模块 -->
+    <select id="getModuleInfoList" resultType="com.sd.baseData.bean.SdModuleInfoBean"> 
+        select module_id             moduleId,
+               module_name           moduleName,
+               module_status         moduleStatus,
+               module_path_id        modulePathId,
+               module_url            moduleUrl,
+               module_parent_id      moduleParentId,
+               module_orderby        moduleOrderby 
+        from sd_sys_module t 
+        where 1=1 
+    <if test="@com.sd.common.sqlutil.SdOgnl@isNotEmpty(parentModuleId)">
+        and  t.module_parent_id = #{parentModuleId}  
+    </if>
+    </select>
+    
+</mapper>

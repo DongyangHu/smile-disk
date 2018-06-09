@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+       xmlns:aop="http://www.springframework.org/schema/aop" 
+       xmlns:context="http://www.springframework.org/schema/context" 
+       xmlns:tx="http://www.springframework.org/schema/tx" 
+       xmlns:task="http://www.springframework.org/schema/task" 
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+           http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+           http://www.springframework.org/schema/mvc
+           http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+           http://www.springframework.org/schema/tx 
+           http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+           http://www.springframework.org/schema/aop 
+           http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+           http://www.springframework.org/schema/context 
+           http://www.springframework.org/schema/context/spring-context-3.0.xsd
+           http://www.springframework.org/schema/task 
+           http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+                        
+    <!-- 引入配置文件 -->
+<!--     <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:sdConfig.properties" />
+    </bean> -->
+    <bean id="propertyConfigurer" class="com.sd.fm.config.SdPropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list>
+                <value>classpath:sdConfig.properties</value>
+                <value>classpath:fmConfig.properties</value>
+            </list>
+        </property>
+    </bean>  
+
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="driverClass" value="${driver}"></property>
+	    <property name="jdbcUrl" value="${url}"></property>
+	    <property name="user" value="${dbUser}"></property>
+	    <property name="password" value="${dbPwd}"></property>
+	    <!-- 当连接池中的连接耗尽的时候c3p0一次同时获取的连接数 -->
+	    <property name="acquireIncrement" value="1"></property>
+	    <!-- 初始化时获取的连接数 -->
+	    <property name="initialPoolSize" value="3"></property>
+	    <!-- 连接的生存时间，单位s -->
+	    <property name="maxIdleTime" value="60"></property>
+	    <!-- 连接池保持的最小连接数 -->
+	    <property name="minPoolSize" value="3"></property>
+	    <!-- 连接池中拥有的最大连接数 -->
+	    <property name="maxPoolSize" value="15"></property>
+	    <!-- 心跳检测时间 -->
+	    <property name="idleConnectionTestPeriod" value="300"></property>
+	    
+	    <!-- 重连相关配置  -->
+	    <!-- 两次连接中间隔时间 -->
+	    <property name="acquireRetryDelay" value="1000"></property>
+	    <!-- 连接池在获得新连接失败时重试的次数 -->
+	    <property name="acquireRetryAttempts" value="30"></property>
+	    <!-- 为true时,当连接获取失败时自动关闭数据源,为false时,获取连接失败将会引起所有等待连接池来获取连接的线程抛出异常。但是数据源仍有效 保留，并在下次调用getConnection()的时候继续尝试获取连接 -->
+	    <property name="breakAfterAcquireFailure" value="false"></property>
+    </bean>
+    
+    
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="configLocation" value="classpath:/${mybatisConfigXml}"></property>
+    </bean>
+
+    
+    <tx:annotation-driven transaction-manager="TransactionManager"/> 
+    <!-- (事务管理) -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource" />
+    </bean>
+    
+    <bean id="redisHttpSessionConfiguration" class="org.springframework.session.data.redis.config.annotation.web.http.RedisHttpSessionConfiguration">
+        <property name="maxInactiveIntervalInSeconds" value="1800"/>
+    </bean>
+
+    <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <property name="maxTotal" value="100" />
+        <property name="maxIdle" value="10" />
+    </bean>
+
+    <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory" destroy-method="destroy">
+        <property name="hostName" value="${redis_hostName}"/>
+        <property name="port" value="${redis_port}"/>
+        <!-- <property name="password" value="${redis_password}" /> -->
+        <property name="timeout" value="3000"/>
+        <property name="usePool" value="true"/>
+        <property name="poolConfig" ref="jedisPoolConfig"/>
+    </bean>
+    
+    
+    <context:component-scan base-package="com.sd.fm.controller" />
+
+    <mvc:annotation-driven />
+
+    <!-- 开启注解事务 -->
+    <context:annotation-config />
+
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="defaultEncoding" value="${file_default_encoding}" />
+        <property name="maxUploadSize" value="${file_max_size}" />
+    </bean>
+</beans>

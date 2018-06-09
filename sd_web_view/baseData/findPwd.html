@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>找回密码</title>
+		<!--#include file="/pub-page/sd_load_js.html" -->
+		<script type="application/javascript" src="/appframe/component/open/jsencrypt.min.js"></script>
+		<script type="application/javascript" src="/appframe/component/private/sdRSAEncrypt.js"></script>
+		<!--#include file="/pub-page/sd_load_css.html" -->
+		<link rel="stylesheet" type="text/css" href="/appframe/component/open/verify/verify.css"/>
+		<link rel="stylesheet" type="text/css" href="/nresource/css/findPwd.css"/>
+	</head>
+	<body>
+		<div class="container">
+			<div class="layui-progress">
+  				<div class="layui-progress-bar" lay-percent="33.3%" id="progress"></div>
+			</div>
+			<div class="row mg-20">
+				<div class="col-sm-12">
+					<h4 class="find-pwd-title">请根据提示进行找回密码操作</h4>
+				</div>
+			</div>
+		</div>
+		<div id="main-1" class="find-pwd-main-div" style="display: none;">
+			<div class="container">
+				<div class="findPwdUserCode find-pwd-div">
+					<label for="userCode" class="text-center">请输入您需要找回密码的<span class="important-text">登录账号</span></label>
+					<input class="form-control" type="text" name="userCode" id="userCode" onblur="checkUserCode();" placeholder="用户账号" />
+				</div>
+				<div id="checkCode" class="find-pwd-div">
+					
+				</div>
+				<div class="find-pwd-div mgt-20">
+					<button class="btn btn-primary form-control" type="button" onclick="next1();">下一步</button>
+				</div>
+			</div>
+		</div>
+		<div id="main-2" class="find-pwd-main-div" style="display: none;">
+			<div class="container">
+				<label for="checkCode2" class="find-pwd-main2-text mgl-5">
+					为了您的帐号安全，我们将向您的注册邮箱
+					<br/><span id="registerEmail" class="important-text"></span>发送校验码
+				</label>
+				<div class="findPwdUserCode find-pwd-div input-group">
+					<input class="form-control" type="text" name="checkCode2" id="checkCode2" value="" />
+					<span class="input-group-btn">
+						<button class="btn btn-default" type="button" id="sendCheckCodeBtn" onclick="sendCheckCode(this);">发送验证码</button>
+					</span>
+				</div>
+				<div class="find-pwd-div mgt-20">
+					<button class="btn btn-primary form-control" type="button" id="sentPwd" onclick="next2();">重置密码</button>
+				</div>
+			</div>
+		</div>
+		<div id="main-3" class="find-pwd-main-div" style="display: none;">
+			<div class="container">
+				<label for="newPwd1" class="find-pwd-main2-text mgl-5">
+					请输入<span class="important-text">新密码</span>
+				</label>
+				<div class="findPwdUserCode find-pwd-div">
+					<input class="form-control" type="password" id="newPwd1" placeholder="请输入新密码"/>
+				</div>
+				<div class="findPwdUserCode find-pwd-div">
+					<input class="form-control" type="password" id="newPwd2" placeholder="再次输入新密码"/>
+				</div>
+				<div class="find-pwd-div mgt-20">
+					<button class="btn btn-primary form-control" type="button" id="checkCodeBtn" onclick="resetPwd();">确认</button>
+				</div>
+			</div>
+		</div>
+	</body>
+	<script>
+		var i18n;
+		var lang;
+		var validateFlag = {};
+		validateFlag.userCode = '0';
+		validateFlag.checkCode = '0';
+		var submitFlag = {};
+		submitFlag.newPwd1 = '0';
+		submitFlag.newPwd2 = '0';
+		var wait = 60;//验证码等待时间
+		$(function(){
+			
+			layui.use('element', function() {
+				var element = layui.element;
+			});
+			require(['sdI18n','cookie'],function(sdI18n,cookieUtil){
+				i18n = sdI18n.getSdOpI18n();
+				lang = cookieUtil.cookie('userLanguage');
+			    if(typeof (lang) == 'undefined' || lang == null || lang == '') {
+			    	lang = 'zh_CN';
+			    }
+				//多语言配置
+
+			});
+			
+			showBlock(1);
+		});
+		//滑动验证
+		function sliderCheck (){
+			require(['cookie'],function(cookieUtil){
+				var lang = cookieUtil.cookie('userLanguage');
+				if(null == lang || undefined == lang){
+					lang = 'zh_CN';
+				}
+				require(['verify_' + lang],function(){
+					$('#checkCode').slideVerify({
+						type : 1,		//类型
+						vOffset : 5,	//误差量，根据需求自行调整
+						barSize : {
+							width : '260px',
+							height : '34px',
+						},
+						ready : function() {
+						},
+						success : function() {
+							validateFlag.checkCode = '1';
+						},
+						error : function() {
+				    		validateFlag.checkCode = '0';
+						}
+					
+					});
+				});
+			});	
+		}
+		
+		//页面显示
+		function showBlock(index){
+			var pageIndex = ['1','2','3'];
+			
+			for(var i = 0; i < pageIndex.length; i++){
+				if(index == pageIndex[i]){
+					if(index == 1){
+						sliderCheck();
+					}
+					if(index == 2){
+						$("#progress").css("width","66.6%");
+					}
+					if(index == 3){
+						$("#progress").css("width","100%");
+					}
+					$("#main-" + pageIndex[i]).css("display","");
+				}else{
+					$("#main-" + pageIndex[i]).css("display","none");
+				}
+			}
+		}
+		
+		//校验userCode是否存在
+		function checkUserCode(){
+			var userCode = $("#userCode").val();
+			if(null == userCode || '' == userCode || undefined == userCode){
+				$("#userCode").removeClass('find-pwd-main-right');
+				$("#userCode").addClass('find-pwd-main-error');
+				layui.use('layer',function(){
+					layer = layui.layer;
+					layer.tips("请输入用户名",'#userCode',{
+						tips: [2, '#3595CC'],
+			  			time: 2000
+					});
+				});
+				validateFlag.userCode = '0';
+				return;
+			}
+			var url = '/sd_baseData/userInfo/checkUserCode?userCode='+userCode+'&languageType='+lang;
+			require(['ajaxUtil'],function(ajaxUtil){
+				ajaxUtil.doGet(url,function(data){
+					if( 0 == data.code){
+						if(!data.flag){//用户存在
+							$("#userCode").removeClass('find-pwd-main-error');
+							$("#userCode").addClass('find-pwd-main-right');
+							validateFlag.userCode = '1';
+						}else{//用户不存在
+							$("#userCode").removeClass('find-pwd-main-right');
+							$("#userCode").addClass('find-pwd-main-error');
+							validateFlag.userCode = '0';
+							layui.use('layer',function(){
+								layer = layui.layer;
+								layer.tips("用户不存在",'#userCode',{
+									tips: [2, '#3595CC'],
+			  						time: 2000
+								});
+							});
+						}
+					}else{
+						layui.use('layer',function(){
+							layer = layui.layer;
+							layer.msg(data.message);
+						});
+					}
+				});
+			});
+		}
+		
+		//第一个下一步
+		function next1() {
+			//用户名错误
+			if(validateFlag.userCode == '0'){
+				$("#userCode").removeClass('find-pwd-main-right');
+				$("#userCode").addClass('find-pwd-main-error');
+				layui.use('layer',function(){
+					layer = layui.layer;
+					layer.tips("用户名有误",'#userCode',{
+						tips: [2, '#3595CC'],
+			  			time: 2000
+					});
+				});
+				return;
+			}
+			//验证码错误
+			if(validateFlag.checkCode == '0'){
+				layui.use('layer',function(){
+					layer = layui.layer;
+					layer.msg("滑动验证有误");
+				});				
+				return;
+			}
+			//显示下一步页面
+			var userCode = $("#userCode").val();
+		    var url = '/sd_baseData/userInfo/getUserEmail?userCode='+userCode+'&languageType='+lang;
+		    require(['ajaxUtil'],function(ajaxUtil){
+		    	ajaxUtil.doGet(url,function(data){
+		    		if(data.code == 0){
+		    			//获取邮箱
+		    			$("#registerEmail").html(data.userEmail);
+		    			//显示下一个界面
+		    			showBlock(2);
+		    		}else{
+		    			layui.use('layer',function(){
+							layer = layui.layer;
+							layer.msg(data.message);
+						});
+		    		}
+		    	});
+		    });
+			
+		}
+		
+		//发送验证码
+		function sendCheckCode(btn){
+			var userCode = $("#userCode").val();
+		    var url = '/sd_baseData/userInfo/sendEmailCode?userCode='+userCode+'&languageType='+lang;
+		    require(['ajaxUtil'],function(ajaxUtil){
+		    	ajaxUtil.doGet(url,function(data){
+		    		if(data.code == 0){
+		    			
+		    		}else{
+		    			layui.use('layer',function(){
+							layer = layui.layer;
+							layer.msg(data.message);
+						});
+		    		}
+		    	});
+		    });
+		    time(btn);
+		}
+		//验证码等待
+        function time(btn) {
+            if (wait == 0) {
+                btn.removeAttribute("disabled");
+                btn.innerHTML = "获取验证码";
+                wait = 60;
+            } else {
+                btn.setAttribute("disabled", true);
+                btn.innerHTML = wait + "秒后重新获取";
+                wait--;
+                setTimeout(function () {
+                    time(btn);
+                },1000);
+            }
+        }
+        //第二个下一步
+        function next2(){
+        	var checkCode = $("#checkCode2").val();
+        	var url = "/sd_baseData/userInfo/checkEmailCode?checkCode="+ checkCode;
+        	require(['ajaxUtil'],function(ajaxUtil){
+        		ajaxUtil.doGet(url,function(data){
+        			if(data.code == 0){
+        				if(data.flag){
+        					showBlock(3);
+        				}else{
+        					layui.use('layer',function(){
+								layer = layui.layer;
+								layer.msg("验证码不正确!");
+							});
+        				}
+        			}else{
+        				layui.use('layer',function(){
+							layer = layui.layer;
+							layer.msg(data.message);
+						});
+        			}
+        		});
+        	});
+        }
+        //设置密码
+        function resetPwd(){
+        	if(submitFlag.newPwd1 == '0' || submitFlag.newPwd2 == '0'){
+        		layui.use('layer',function(){
+					layer = layui.layer;
+					layer.msg("输入有误");
+				});
+				return;
+        	}else{
+        		var url = '/sd_baseData/userInfo/resetUserPwd';
+				var params = {};
+				params.userCode = $("#userCode").val();
+				var password = $("#newPwd1").val();
+				params.password = sdRSAEncrypt.encrypt(password);
+				params.languageType = lang;
+				require(['ajaxUtil'],function(ajaxUtil){
+					layui.use('layer',function(){
+						layer = layui.layer;
+						loadingIndex = layer.load(0, {shade:0.3});
+					});
+					ajaxUtil.doPost(url,function(data){
+						layer.close(loadingIndex);
+						if(0 == data.code){
+							submitFlag = {};
+							layui.use('layer',function(){
+								layer = layui.layer;
+								layer.alert('密码重置成功，请使用新密码登录。', {
+									icon: 6,
+									end: function () {
+										window.parent.layer.closeAll();
+									}
+								});
+							});
+						}else{
+							layui.use('layer',function(){
+								layer = layui.layer;
+								layer.msg("操作失败");
+							});
+						}
+					},params);
+				});
+        	}
+        }
+        //第一次密码框
+		$("#newPwd1").blur(function(){
+			var userPwd = $("#newPwd1").val();
+			//长度
+			if(null == userPwd || '' == userPwd || undefined == userPwd){
+				$("#newPwd1").removeClass('find-pwd-main-right');
+				$("#newPwd1").addClass('find-pwd-main-error');
+				layui.use('layer',function(){
+					layer = layui.layer;
+					layer.tips(i18n.prop("register_userPwdTips_empty"),'#newPwd1',{
+						tips: [2, '#3595CC'],
+  						time: 2000
+					});
+				});
+				submitFlag.newPwd1 = '0';
+			}else if(userPwd.length < 6 || userPwd.length > 16){
+				$("#newPwd1").removeClass('find-pwd-main-right');
+				$("#newPwd1").addClass('find-pwd-main-error');
+				layui.use('layer',function(){
+					layer = layui.layer;
+					layer.tips(i18n.prop("register_userPwdTips_lengthError"),'#newPwd1',{
+						tips: [2, '#3595CC'],
+  						time: 2000
+					});
+				});
+				submitFlag.newPwd1 = '0';
+			}else{
+				var regex = /^.*[\u4e00-\u9fa5]{1,}.*|.*[\s]{1,}.*$/;
+				if(regex.test(userPwd)){
+				$("#newPwd1").removeClass('find-pwd-main-right');
+				$("#newPwd1").addClass('find-pwd-main-error');
+					layui.use('layer',function(){
+						layer = layui.layer;
+						layer.tips(i18n.prop("register_userPwdTips_formatError"),'#newPwd1',{
+							tips: [2, '#3595CC'],
+	  						time: 2000
+						});
+					});
+					submitFlag.newPwd1 = '0';
+				}else{
+					$("#newPwd1").removeClass('find-pwd-main-error');
+					$("#newPwd1").addClass('find-pwd-main-right');
+					submitFlag.newPwd1 = '1';
+				}
+			}
+		});
+		//二次密码框
+		$("#newPwd2").blur(function(){
+			var userPwd = $("#newPwd1").val();
+			var reUserPwd = $("#newPwd2").val();
+			if(null == reUserPwd || '' == reUserPwd || undefined == reUserPwd){
+				$("#newPwd2").removeClass('find-pwd-main-right');
+				$("#newPwd2").addClass('find-pwd-main-error');
+				layui.use('layer',function(){
+					layer = layui.layer;
+					layer.tips(i18n.prop("register_userPwdTips_empty"),'#newPwd2',{
+						tips: [2, '#3595CC'],
+  						time: 2000
+					});
+				});
+				submitFlag.newPwd2 = '0';
+			}else if(reUserPwd == userPwd){
+				$("#newPwd2").removeClass('find-pwd-main-error');
+				$("#newPwd2").addClass('find-pwd-main-right');
+				submitFlag.newPwd2 = '1';
+			}else{
+				$("#newPwd2").removeClass('find-pwd-main-right');
+				$("#newPwd2").addClass('find-pwd-main-error');
+				layui.use('layer',function(){
+					layer = layui.layer;
+					layer.tips(i18n.prop("register_reUserPwdTips_diffrent"),'#newPwd2',{
+						tips: [2, '#3595CC'],
+	  					time: 2000
+					});
+				});
+				submitFlag.newPwd2 = '0';
+			}
+		});
+	</script>
+</html>

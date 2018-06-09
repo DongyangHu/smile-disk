@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="shareFile" >
+    <!-- 添加共享 -->
+    <insert id="insertShare" parameterType="com.sd.fm.bean.SdShareFileBean">
+        insert into sd_sys_file_share(share_id,share_user_id,receive_user_id,share_file_id,crtime)
+        values(#{shareId},#{shareUserId},#{receiveUserId},#{shareFileId},#{crtime}) 
+    </insert>
+    
+    <!-- 删除共享 -->
+    <delete id="deleteShare" parameterType="java.lang.String">
+        delete from sd_sys_file_share where share_id = #{shareId} 
+    </delete>
+    
+    <sql id="shareFileSql">
+        select 
+              t2.file_id           fileId,
+              t2.file_name         fileName, 
+              t2.file_path         filePath, 
+              t2.file_dir_id       fileDirId,
+              t2.status            status,
+              t2.cruser_id         cruserId, 
+              t2.crtime            crtime,
+              t2.file_type         fileType, 
+              t2.file_lable        fileLable,
+              t2.file_size         fileSize,
+              t3.user_nikename     shareUser,
+              t1.share_id          shareId  
+        from sd_sys_file_share t1, sd_sys_file t2, sd_sys_user t3 
+        where 1=1 
+        and t2.file_id = t1.share_file_id 
+        and t3.user_id = t1.share_user_id 
+    </sql>    
+    
+    <!-- 收到的共享列表 -->
+    <select id="recieveShareList" parameterType="java.util.HashMap" resultType="com.sd.fm.bean.SdShareFileBean2">
+        <include refid="shareFileSql"/>
+        and t1.receive_user_id = #{userId} 
+        <include refid="pageQueryBase.pageAttrSql"/>
+    </select>
+    <!-- 收到的列表共享条数 -->
+    <select id="recieveShareListCount" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+        select count(1) from (
+	        <include refid="shareFileSql"/>
+	        and t1.receive_user_id = #{userId} 
+        ) A2
+    </select>
+    
+    <!-- 发出的共享列表 -->
+    <select id="sendShareList" parameterType="java.util.HashMap" resultType="com.sd.fm.bean.SdShareFileBean2">
+        <include refid="shareFileSql"/>
+        and t1.share_user_id = #{userId} 
+        <include refid="pageQueryBase.pageAttrSql"/>
+    </select>
+    <!-- 发出的列表共享条数 -->
+    <select id="sendShareListCount" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+        select count(1) from (
+	        <include refid="shareFileSql"/>
+	        and t1.share_user_id = #{userId} 
+        ) A2
+    </select>
+    
+    
+</mapper>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<title>Smile Disk Welcome</title>
+		<!--#include file="/pub-page/sd_load_js.html" -->
+		<script src="/nresource/js/index.js" type="text/javascript" charset="utf-8"></script>
+		<!--#include file="/pub-page/sd_load_css.html" -->
+	</head>
+
+	<body class="layui-layout-body">
+		<div class="layui-layout layui-layout-admin">
+			<div class="layui-header">
+				<div class="layui-logo cursor-pointer" onclick="location.reload();"><span style="font-size:26px;">Smile Disk</span></div>
+				<!-- 头部区域（可配合layui已有的水平导航） -->
+				<ul class="layui-nav layui-layout-left" id="topItems">
+<!--					<li class="layui-nav-item">
+						<a href="javascript:;">其它系统</a>
+						<dl class="layui-nav-child">
+							<dd>
+								<a href="">邮件管理</a>
+							</dd>
+							<dd>
+								<a href="">消息管理</a>
+							</dd>
+							<dd>
+								<a href="">授权管理</a>
+							</dd>
+						</dl>
+					</li>-->
+				</ul>
+				<ul class="layui-nav layui-layout-right">
+					<li class="layui-nav-item">
+						<a href="javascript:;">
+							<img src="/nresource/img/headimg.png" class="layui-nav-img">
+							<span id="userNikename"></span>
+						</a>
+						<dl class="layui-nav-child">
+							<dd>
+								<a href="">基本资料</a>
+							</dd>
+							<dd>
+								<a href="">修改密码</a>
+							</dd>
+						</dl>
+					</li>
+					<li class="layui-nav-item">
+						<a href="javascript:void(0);" onclick="loginOut();">退出</a>
+					</li>
+				</ul>
+			</div>
+
+			<div class="layui-side layui-bg-black">
+				<div class="layui-side-scroll">
+					<!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+					<ul class="layui-nav layui-nav-tree" lay-filter="test" id="leftItems">
+<!--						<li class="layui-nav-item layui-nav-itemed">
+							<a class="" href="javascript:;">我的文件</a>
+							<dl class="layui-nav-child">
+								<dd>
+									<a href="javascript:;">所有文件</a>
+								</dd>
+								<dd>
+									<a href="javascript:;">视频</a>
+								</dd>
+								<dd>
+									<a href="javascript:;">文档</a>
+								</dd>
+								<dd>
+									<a href="javascript:;">图片</a>
+								</dd>
+								<dd>
+									<a href="javascript:;">其他</a>
+								</dd>
+							</dl>
+						</li>
+						<li class="layui-nav-item">
+							<a href="javascript:;">消息管理</a>
+							<dl class="layui-nav-child">
+								<dd>
+									<a href="javascript:;">站内信</a>
+								</dd>
+								<dd>
+									<a href="javascript:;">好友消息</a>
+								</dd>
+							</dl>
+						</li>
+						<li class="layui-nav-item">
+							<a href="javascript:;">好友管理</a>
+							<dl class="layui-nav-child">
+								<dd>
+									<a href="javascript:;">好友申请</a>
+								</dd>
+								<dd>
+									<a href="javascript:;">聊天交流</a>
+								</dd>
+								<dd>
+									<a href="javascript:;">互动分享</a>
+								</dd>
+							</dl>
+						</li>
+						<li class="layui-nav-item">
+							<a href="javascript:;">回收站</a>
+						</li>-->
+					</ul>
+				</div>
+			</div>
+
+			<div class="layui-body" style="overflow: hidden;">
+				<iframe style="border: 0;" id="mainContent" name="mainContent" border="0" scrolling="yes" width="100%" height="100%" src=""></iframe>
+			</div>
+
+			<div class="layui-footer text-center">
+				该网站仅用于个人学习测试使用，不进行任何形式的商业用途.
+				&nbsp;&nbsp;(c) Copyright 2017 HuDongyang, ShiMengxuan. All Rights Reserved.
+			</div>
+		</div>
+		<script>
+			layui.use('element', function() {
+				var element = layui.element;
+			});
+		</script>
+	</body>
+
+</html>

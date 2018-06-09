@@ -1,0 +1,8 @@
+<li v-for="module in moduleList" class="layui-nav-item">
+	<a href="#" v-if="module.moduleUrl == 'null' || module.moduleUrl == ''">
+		{{module.moduleName}}
+	</a>
+	<a :href="module.moduleUrl" v-else>
+		{{module.moduleName}}
+	</a>
+</li>

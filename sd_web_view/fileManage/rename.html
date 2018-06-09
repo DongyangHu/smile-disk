@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>重命名</title>
+		<!--#include file="/pub-page/sd_load_js.html" -->
+		<!--#include file="/pub-page/sd_load_css.html" -->
+	</head>
+	<style type="text/css">
+		.main-div{
+			padding: 10px 50px;
+		}
+	</style>
+	<body>
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="main-div">
+					<p class="text-left text-primary mgb-10">原名称</p>
+					<input type="text" class="form-control" id="oldName" value="测试文件.mp4" />
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="main-div">
+					<p class="text-left text-success mgb-10">新名称&nbsp;&nbsp;<small class="text-danger">（建议不要修改文件扩展名，以防文件不可用）</small></p>
+					<input type="text" class="form-control" id="newName" value="测试文件.mp4" />
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="main-div">
+					<input type="button" class="form-control btn btn-primary" id="updateBtn" value="修改" />
+				</div>
+			</div>
+		</div>
+			
+	</body>
+</html>

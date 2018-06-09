@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>分享</title>
+		<!--#include file="/pub-page/sd_load_js.html" -->
+		<!--#include file="/pub-page/sd_load_css.html" -->
+		<script type="text/javascript" src="../nresource/js/share.js" ></script>
+	</head>
+	<body>
+		<div class="container-fluid">
+			<div class="layui-tab layui-tab-brief" lay-filter="tabList">
+			  <ul class="layui-tab-title">
+			    <li class="layui-this" lay-id="receiveShare">收到的分享</li>
+			    <li lay-id="sendShare">发出的分享</li>
+			  </ul>
+			  <div class="layui-tab-content">
+			  	<!-- 收到的分享列表 -->
+			    <div class="layui-tab-item layui-show" id="tab1">
+			    	
+			    </div>
+			   <!-- 分页 -->
+				<div class="row">
+					<div id="pageDiv1" class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="display: none;"></div>
+				</div>
+				
+				<!-- 发出的分享列表 -->
+			    <div class="layui-tab-item" id="tab2">
+			    	
+			    </div>
+			   <!-- 分页 2-->
+				<div class="row">
+					<div id="pageDiv2" class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="display: none;"></div>
+				</div>
+			  </div>
+			</div>
+		</div>
+	</body>
+</html>

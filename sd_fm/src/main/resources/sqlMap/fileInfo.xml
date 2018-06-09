@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="fileInfo" >
+    
+    <sql id="fileSql">
+        select 
+              t.file_id      fileId,
+              t.file_name    fileName, 
+              t.file_path    filePath, 
+              t.file_dir_id  fileDirId,
+              t.status       status,
+              t.cruser_id    cruserId, 
+              t.crtime       crtime,
+              t.file_type    fileType, 
+              t.file_lable   fileLable,
+              t.file_size    fileSize  
+        from sd_sys_file t 
+        where 1=1  
+    </sql>
+    <!-- 保存文件 -->
+    <insert id="saveFile" parameterType="com.sd.fm.bean.SdFileBean">
+        insert into sd_sys_file (file_id,file_name,file_path,file_dir_id,status,cruser_id,crtime,file_type,file_lable,file_size) 
+        values(#{fileId},#{fileName},#{filePath},#{fileDirId},#{status},#{cruserId},#{crtime},#{fileType},#{fileLable},#{fileSize}) 
+    </insert>
+    <!-- 根据ID获取文件信息 -->
+    <select id="getFileInfoById" parameterType="java.lang.String" resultType="com.sd.fm.bean.SdFileBean">
+        <include refid="fileSql"/>
+        and t.file_id = #{fileId} 
+    </select>
+    <!-- 创建文件夹 -->
+    <insert id="createDir" parameterType="com.sd.fm.bean.SdFileDirBean">
+        insert into sd_sys_file_dir (dir_id,dir_name,parent_dir_id,dir_path_id,dir_path_name,status,cruser_id,crtime)
+        values(#{dirId},#{dirName},#{parentDirId},#{dirPathId},#{dirPathName},#{status},#{cruserId},#{crtime})
+    </insert>
+    
+    <sql id="fileDirSql">
+        select 
+              t.dir_id           dirId,
+              t.dir_name         dirName,
+              t.parent_dir_id    parentDirId,
+              t.dir_path_id      dirPathId,
+              t.dir_path_name    dirPathName,
+              t.status           status,
+              t.cruser_id        cruserId,
+              t.crtime           crtime
+        from sd_sys_file_dir t
+        where 1=1 and t.status=1          
+    </sql>
+    <!-- 获取单个文件夹信息 -->
+    <select id="getFileDirInfoById" parameterType="java.lang.String" resultType="com.sd.fm.bean.SdFileDirBean">
+        <include refid="fileDirSql"></include>
+        and t.dir_id = #{dirId} 
+    </select>
+    
+    <!-- 根据父节点和用户id获取文件夹列表 -->
+    <select id="getFileDirPageList" parameterType="java.util.HashMap" resultType="com.sd.fm.bean.SdFileDirBean">
+        <include refid="fileDirSql"/>
+        <if test="@com.sd.common.sqlutil.SdOgnl@isNotEmpty(userId)">
+            and  t.cruser_id = #{userId}  
+        </if>
+        <if test="@com.sd.common.sqlutil.SdOgnl@isNotEmpty(parentDirId)">
+            and  t.parent_dir_id = #{parentDirId}  
+        </if>
+        <if test="@com.sd.common.sqlutil.SdOgnl@isEmpty(parentDirId)">
+            and  t.parent_dir_id = '' 
+        </if>
+        <if test="@com.sd.common.sqlutil.SdOgnl@isNotEmpty(nameSign)">
+            and  t.dir_name like #{nameSign}  
+        </if>        
+        
+        <include refid="pageQueryBase.pageAttrSql"/>
+    </select>
+    
+    <!-- 文件夹列表数量 -->
+    <select id="getFileDirListCount" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+        select count(1) from (
+        <include refid="fileDirSql"/>
+        <if test="@com.sd.common.sqlutil.SdOgnl@isNotEmpty(userId)">
+            and  t.cruser_id = #{userId}  
+        </if>
+        <if test="@com.sd.common.sqlutil.SdOgnl@isNotEmpty(parentDirId)">
+            and  t.parent_dir_id = #{parentDirId}  
+        </if>
+        <if test="@com.sd.common.sqlutil.SdOgnl@isEmpty(parentDirId)">
+            and  t.parent_dir_id = '' 
+        </if>
+        <if test="@com.sd.common.sqlutil.SdOgnl@isNotEmpty(nameSign)">
+            and  t.dir_name like #{nameSign}  
+        </if>    
+        ) t1
+    </select>
+    
+    <!-- 根据父节点和用户id获取文件夹列表 -->
+    <select id="getFileDirList" parameterType="java.util.HashMap" resultType="com.sd.fm.bean.SdFileDirBean">
+        <include refid="fileDirSql"/>
+        <if test="@com.sd.common.sqlutil.SdOgnl@isNotEmpty(userId)">
+            and  t.cruser_id = #{userId}  
+        </if>
+        <if test="@com.sd.common.sqlutil.SdOgnl@isNotEmpty(parentDirId)">
+            and  t.parent_dir_id = #{parentDirId}  
+        </if>
+        <if test="@com.sd.common.sqlutil.SdOgnl@isEmpty(parentDirId)">
+            and  t.parent_dir_id = '' 
+        </if>
+        <if test="@com.sd.common.sqlutil.SdOgnl@isNotEmpty(nameSign)">
+            and  t.dir_name like #{nameSign}  
+        </if>        
+    </select>    
+    <!-- 每个文件夹对应的子节点数 -->
+    <select id="getFileDirChildCount" resultType="java.util.HashMap">
+            select t1.dir_id DIRID,count(1) COUNT from sd_sys_file_dir t1, sd_sys_file_dir t2 
+            where t1.dir_id = t2.parent_dir_id  
+        <if test="@com.sd.common.sqlutil.SdOgnl@isNotEmpty(userId)">
+            and  t1.cruser_id = #{userId}  
+        </if>
+        <if test="@com.sd.common.sqlutil.SdOgnl@isNotEmpty(parentDirId)">
+            and  t1.parent_dir_id = #{parentDirId}  
+        </if>
+        <if test="@com.sd.common.sqlutil.SdOgnl@isEmpty(parentDirId)">
+            and  t1.parent_dir_id = '' 
+        </if>
+        <if test="@com.sd.common.sqlutil.SdOgnl@isNotEmpty(nameSign)">
+            and  t1.dir_name like #{nameSign}  
+        </if>  
+            and t1.status = 1  
+            and t2.status = 1 
+            GROUP BY t1.dir_id 
+    </select>
+    
+    <!-- 文件夹下的文件 -->
+    <select id="getFileList" parameterType="java.util.HashMap" resultType="com.sd.fm.bean.SdFileBean">
+        <include refid="fileSql"></include>
+        <if test="@com.sd.common.sqlutil.SdOgnl@isNotEmpty(userId)">
+            and  t.cruser_id = #{userId}  
+        </if>
+        <if test="@com.sd.common.sqlutil.SdOgnl@isNotEmpty(fileName)">
+            and  t.file_lable like #{fileName}  
+        </if>
+        <if test="@com.sd.common.sqlutil.SdOgnl@isNotEmpty(fileType)">
+            and  t.file_type = #{fileType}  
+        </if>
+        <if test="@com.sd.common.sqlutil.SdOgnl@isNotEmpty(status)">
+            and  t.status = #{status}  
+        </if>
+        <if test="@com.sd.common.sqlutil.SdOgnl@isNotEmpty(parentDirId)">
+            and  t.file_dir_id in (
+                select dir_id from sd_sys_file_dir 
+                    where dir_path_id like (
+                        select CONCAT(dir_path_id,dir_id,',','%') from sd_sys_file_dir 
+                            where dir_id = #{parentDirId})
+                            or dir_id = #{parentDirId}
+                ) 
+        </if>
+        order by t.crtime desc 
+        <include refid="pageQueryBase.pageAttrSql"/>
+    </select>
+    
+    <!-- 文件夹下的文件总数 -->
+    <select id="getFileListCount" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+        select count(1) from (
+        <include refid="fileSql"></include>
+        <if test="@com.sd.common.sqlutil.SdOgnl@isNotEmpty(userId)">
+            and  t.cruser_id = #{userId}  
+        </if>
+        <if test="@com.sd.common.sqlutil.SdOgnl@isNotEmpty(fileName)">
+            and  t.file_lable like #{fileName}  
+        </if>
+        <if test="@com.sd.common.sqlutil.SdOgnl@isNotEmpty(fileType)">
+            and  t.file_type = #{fileType}  
+        </if>     
+        <if test="@com.sd.common.sqlutil.SdOgnl@isNotEmpty(status)">
+            and  t.status = #{status}  
+        </if>           
+        <if test="@com.sd.common.sqlutil.SdOgnl@isNotEmpty(parentDirId)">
+            and  t.file_dir_id in (
+                select dir_id from sd_sys_file_dir 
+                    where dir_path_id like (
+                        select CONCAT(dir_path_id,dir_id,',','%') from sd_sys_file_dir 
+                            where dir_id = #{parentDirId}) 
+                            or dir_id = #{parentDirId} 
+                ) 
+        </if>
+        ) t3
+    </select>
+    
+    <!-- 根据id删除文件夹(临时) -->
+    <update id="deleteFileDirById" parameterType="java.lang.String">
+        update sd_sys_file_dir set status = 0 where dir_id = #{dirId} 
+    </update>
+    <!-- 根据id删除文件(临时) -->
+    <update id="deleteFileById" parameterType="java.lang.String">
+        update sd_sys_file set status = 0 where file_id = #{fileId} 
+    </update>
+    <!-- 根据id恢复文件 -->
+    <update id="recoverFileById" parameterType="java.lang.String">
+        update sd_sys_file set status = 1 where file_id = #{fileId} 
+    </update>
+    <!-- 永久删除文件 -->
+    <delete id="deleteFileByIdPhysical" parameterType="java.lang.String">
+        delete from sd_sys_file where file_id = #{fileId} 
+    </delete>
+    
+    <!-- 文件重命名 -->
+    <update id="updateFileName" parameterType="java.util.HashMap">
+        update sd_sys_file set file_lable = #{newFileName} where file_id = #{fileId} 
+    </update>
+    
+    <!-- 文件夹重命名 -->
+    <update id="updateFileDirName" parameterType="java.util.HashMap">
+        update sd_sys_file_dir set dir_name = #{dirName} where dir_id = #{dirId} 
+    </update>
+</mapper>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>我的文件</title>
+		<!--#include file="/pub-page/sd_load_js.html" -->
+		<script type="text/javascript" src="/nresource/js/myFileList.js" ></script>
+		<script type="text/javascript" src="/appframe/component/open/ztree/js/jquery.ztree.core.min.js"></script>
+		<script type="text/javascript" src="/appframe/component/open/ztree/js/jquery.ztree.excheck.min.js"></script>
+		<script type="text/javascript" src="/appframe/component/open/ztree/js/jquery.ztree.exedit.min.js"></script>
+		<!--#include file="/pub-page/sd_load_css.html" -->
+		<link rel="stylesheet" type="text/css" href="/appframe/component/open/ztree/css/zTreeStyle.css"/>
+		<style>
+			a:visited{
+				text-decoration: none;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-lg-2 col-md-2 col-sm-2" style="height: 480px; border-right: 1px solid gainsboro;">
+					<a onclick="rootFileList();" class="cursor-pointer"><h4 class="text-primary mgt-10 mgb-10">文件夹<span class="text-danger">(点击选取根路径)</span></h4></a>
+					<ul id="dirTree" class="ztree"></ul>
+				</div>
+				<div class="col-lg-10 col-md-10 col-sm-10 mgt-10">
+					<div class="row mgb-10 mgt-10">
+						<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+							<button class="layui-btn layui-btn-sm" id="uploadBtn">
+								<i class="layui-icon">&#xe67c;</i>上传文件
+							</button>
+							<button class="layui-btn layui-btn-sm" id="createDirBtn">
+								<i class=" layui-icon">&#xe622;</i>新建文件夹
+							</button>
+							<button class="layui-btn layui-btn-sm" id="deletFileBtn">
+								<i class="layui-icon">&#x1006;</i>删除文件
+							</button>
+						</div>
+						<div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 col-lg-offset-3 col-md-offset-3 col-sm-offset-3">
+							<div class="input-group">
+								<input type="text" id="fileNameInput" class="form-control">
+								<span class="input-group-btn">
+									<button class="btn btn-default" type="button" onclick="search(1);">搜索</button>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-lg-12" id="fileList">
+							
+						</div>
+					</div>
+					<!-- 分页 -->
+					<div class="row">
+						<div id="pageDiv" class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="display: none;"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

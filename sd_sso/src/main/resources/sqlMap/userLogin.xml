@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="userLogin" >
+    <select id="getUserLoginInfo" parameterType="java.util.HashMap" resultType="com.sd.sso.filter.bean.SdUserSessionInfoBean">
+        
+        select 
+              t1.user_id            userId,
+              t1.user_code          userCode,
+              t1.user_nikename      userNikename,
+              t1.user_gender        userGender,
+              t1.user_email         userEmail,
+              t1.user_status        userStatus,
+              t1.user_headimg_url   userHeadimgUrl,
+              t1.crtime             crtime,
+              t2.role_id            roleId 
+        from sd_sys_user t1 left join sd_sys_user_role t2 
+        on t1.user_id = t2.user_id 
+        where t1.user_code = #{userCode} 
+        and t1.user_password = #{password} 
+        and t1.user_status = 1
+    </select>
+
+</mapper>

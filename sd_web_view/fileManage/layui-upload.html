@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>layui-upload</title>
+		<!--#include file="/pub-page/sd_load_js.html" -->
+		<!--#include file="/pub-page/sd_load_css.html" -->
+	</head>
+	<body>
+		<button type="button" class="layui-btn" id="upload">
+  			<i class="layui-icon">&#xe67c;</i>上传图片
+		</button>
+	</body>
+	<script type="text/javascript">
+		layui.use('upload', function(){
+  			var upload = layui.upload;
+   
+			//执行实例
+			var uploadInst = upload.render({
+				elem: '#upload',
+			    url: '/sd_fm/mvc/fileUpload/upload',
+			    accept:'file',
+			    done: function(res){
+			    	
+			    },
+			    error: function(){
+			    	
+			    }
+			});
+		});
+	</script>
+</html>

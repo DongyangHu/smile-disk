@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>用户注册</title>
+		<!--#include file="/pub-page/sd_load_js.html" -->
+		<script type="application/javascript" src="/nresource/js/register.js"></script>
+		<script type="application/javascript" src="/appframe/component/open/jsencrypt.min.js"></script>
+		<script type="application/javascript" src="/appframe/component/private/sdRSAEncrypt.js"></script>
+		<!--#include file="/pub-page/sd_load_css.html" -->
+		<link rel="stylesheet" href="/nresource/css/register.css" />
+		<link rel="stylesheet" type="text/css" href="../appframe/component/open/verify/verify.css"/>
+	</head>
+	<body>
+		<div class="container mg-5">
+			<div class="row">
+				<div class="col-sm-12">
+					<h4 class="register-title-logo" id="registerTitleH4"></h4>
+				</div>
+			</div>
+			<div class="buttom-line"></div>
+		</div>
+			
+		<div class="register-input-group">
+			<div class="register-input-group-main">
+				<input type="text" name="userCode" id="userCode" class="form-control"/>
+			</div>
+			<div class="hidden register-input-group-massage" id="userCodeMessage">
+				<div><span id="userCodeMsgSpan"></span></div>
+			</div>
+			<div class="register-input-group-main">
+				<input type="password" name="userPwd" id="userPwd" class="form-control"/>
+			</div>
+			<div class="register-input-group-massage" id="userPwdMessage">
+				<div><span id="userPwdMsgSpan1"></span></div>
+				<div><span id="userPwdMsgSpan2"></span></div>
+			</div>
+			<div class="register-input-group-main">
+				<input type="password" name="reUserPwd" id="reUserPwd" class="form-control"/>
+			</div>
+			<div class="register-input-group-massage" id="reUserPwdMessage">
+				<div><span id="reUserPwdMsgSpan"></span></div>
+			</div>
+			<div class="register-input-group-main">
+				<input type="text" name="userEmail" id="userEmail" class="form-control"/>
+			</div>
+			<div class="register-input-group-massage" id="userEmailMessage">
+				<div><span id="userEmailMsgSpan"></span></div>
+			</div>
+			<div class="register-input-group-main" id="checkCode">
+				
+			</div>
+			<div class="register-input-group-massage" id="checkCodeMessage">
+				<div><span id="checkCodeMsgSpan"></span></div>
+			</div>
+			<div class="register-input-group-main">
+				<button type="button" class="btn btn-primary form-control" id="registerButton" onclick="submiteRegist();"></button>				
+			</div>
+		</div>
+	</body>
+</html>

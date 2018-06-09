@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="notice" >
+    
+    <!-- 消息 -->
+    <sql id="noticeSql">
+        select 
+              t1.notice_id          noticeId,
+              t1.notice_title       noticeTitle, 
+              t1.notice_content     noticeContent, 
+              t1.cruser_id          cruserId,
+              t1.crtime             crtime,
+              t2.status             status 
+        from sd_notice_info t1 , sd_user_notice t2 
+        where 1=1          
+    </sql>
+    <!-- 管理员消息 -->
+    <sql id="allNoticeSql">
+        select 
+              t1.notice_id          noticeId,
+              t1.notice_title       noticeTitle, 
+              t1.notice_content     noticeContent, 
+              t1.cruser_id          cruserId,
+              t1.crtime             crtime 
+        from sd_notice_info t1 
+        where 1=1          
+    </sql>
+    <!-- 所有的消息 -->
+    <select id="getAllNoticeList" parameterType="java.util.HashMap" resultType="com.sd.baseData.bean.SdNoticeInfoBean">
+        <include refid="allNoticeSql"/>
+        <if test="@com.sd.common.sqlutil.SdOgnl@isNotEmpty(noticeName)">
+            and  t1.notice_title like #{noticeName} 
+        </if>
+            order by t1.crtime desc 
+        <include refid="pageQueryBase.pageAttrSql"/>
+    </select>
+    <select id="getAllNoticeListCount" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+        select count(1) from (
+            <include refid="allNoticeSql"/>
+		    <if test="@com.sd.common.sqlutil.SdOgnl@isNotEmpty(noticeName)">
+		        and  t1.notice_title like #{noticeName} 
+		    </if>        
+        ) A3
+    </select>
+    
+    
+    <!-- 消息列表 -->
+    <select id="getNoticeList" parameterType="java.util.HashMap" resultType="com.sd.baseData.bean.SdNoticeInfoBean"> 
+        <include refid="noticeSql"/>
+        and t1.notice_id = t2.notice_id 
+        and t2.user_id = #{userId} 
+        
+	    <if test="@com.sd.common.sqlutil.SdOgnl@isNotEmpty(noticeName)">
+	        and  t1.notice_title like #{noticeName} 
+	    </if>
+	    order by t1.crtime desc 
+	    <include refid="pageQueryBase.pageAttrSql"/>
+    </select>
+    
+    <!-- 消息列表条数 -->
+    <select id="getNoticeListCount" parameterType="java.util.HashMap" resultType="java.lang.Integer">
+        select count(1) from (
+            <include refid="noticeSql"/>
+            and t1.notice_id = t2.notice_id 
+            and t2.user_id = #{userId} 
+        
+            <if test="@com.sd.common.sqlutil.SdOgnl@isNotEmpty(noticeName)">
+                and  t1.notice_title like #{noticeName} 
+            </if>            
+        ) A
+        
+    </select>
+    
+    <!-- 更改消息阅读状态已读 -->
+    <update id="updateStatus" parameterType="java.util.HashMap">
+        update sd_user_notice set status = 1 where user_id = #{userId} and notice_id = #{noticeId} 
+    </update>
+    
+    <!-- 发布消息 -->
+    <insert id="publishNotice" parameterType="com.sd.baseData.bean.SdNoticeInfoBean">
+        insert into sd_notice_info (notice_id,notice_title,notice_content,cruser_id,crtime)
+        values(#{noticeId},#{noticeTitle},#{noticeContent},#{cruserId},#{crtime})
+    </insert>
+    <!-- 发布消息给用户 -->
+    <insert id="noticeUser" parameterType="java.util.HashMap">
+        insert into sd_user_notice values(#{userId},#{noticeId},#{status}) 
+    </insert>
+    <!-- 删除好友消息关系 -->
+    <delete id="deleteNoticeUser" parameterType="java.lang.String">
+        delete from sd_user_notice where notice_id = #{noticeId}
+    </delete>
+    <!-- 删除消息 -->
+    <delete id="deleteNotice" parameterType="java.lang.String">
+        delete from sd_notice_info where notice_id = #{noticeId}
+    </delete>
+    
+    
+</mapper>

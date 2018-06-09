@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>我的消息</title>
+		<!--#include file="/pub-page/sd_load_js.html" -->
+		<!--#include file="/pub-page/sd_load_css.html" -->
+	</head>
+	<body>
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-lg-12 col-md-12 col-sm-12 mgt-10">
+					<div class="row mgb-10 mgt-10">
+						<div class="col-lg-3 col-md-3 col-sm-3 col-xs-12">
+							<div class="input-group">
+								<input type="text" id="fileNameInput" class="form-control">
+								<span class="input-group-btn">
+									<button class="btn btn-default" type="button" onclick="search(1);">搜索</button>
+								</span>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-lg-12" id="fileList">
+							
+						</div>
+					</div>
+					<!-- 分页 -->
+					<div class="row">
+						<div id="pageDiv" class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="display: none;"></div>
+					</div>					
+				</div>
+			</div>
+		</div>
+		<script type="application/javascript">
+			var currentPage = 1;
+			var pageSize = 9;
+			var pageLayer;
+			layui.use('layer',function(){
+				pageLayer = layui.layer;
+			});
+			
+			
+			$(function(){
+				search(1);
+			});
+			
+			/**
+			 * 查询
+			 * @param {Object} pageNo
+			 */
+			function search(pageNo){
+				var noticeName = encodeURIComponent(encodeURIComponent($("#fileNameInput").val()));
+				var url = "/sd_baseData/notice/list?noticeName=" + noticeName + "&pageNo=" + pageNo + "&pageSize=" + pageSize;
+				
+				require(['ajaxUtil','template'], function(ajaxUtil, template){
+					ajaxUtil.doGet(url, function(data){
+						if(data.code == 0){
+							var totalCount = data.totalCount;
+							//有文件
+							if(totalCount > 0){
+								if(1 == pageNo){
+									$("#pageDiv").css('display','');
+									createPage(pageSize, data.totalCount);
+								}
+								template.importSDM('/notice/notice.sdm','#fileList',function(vueObject){
+									
+								},data);
+							}else{//没有文件
+								$("#pageDiv").css('display','none');
+								$('#fileList').html("<hr/><h4 class='text-danger text-center'>暂时没有消息!</h4>");
+							}
+						}else{
+							pageLayer.alert(data.message);
+						}
+					});
+				});
+			}		
+			/**
+			 * 
+			 * @param {Object} pageSize
+			 * @param {Object} totalCount
+			 */
+			function createPage(pageSize, totalCount){
+				layui.use('laypage',function(){
+					var laypage = layui.laypage;
+					
+					laypage.render({
+						elem:'pageDiv',
+						count:totalCount,
+						limit:pageSize,
+						jump:function(obj, first){
+							currentPage = obj.curr;
+							if(!first){
+								search(currentPage);
+							}
+						}
+					});
+				});
+			}
+			/**
+			 * 全选
+			 */
+			function selectAll(obj){
+				var fileBoxList = document.getElementsByName("fileBox");
+				if(obj.checked){
+					for(var i = 0; i < fileBoxList.length; i++){
+						fileBoxList[i].checked = true;
+					}
+				}else{
+					for(var i = 0; i < fileBoxList.length; i++){
+						fileBoxList[i].checked = false;
+					}		
+				}
+			}
+			
+			/**
+			 * 展示消息
+			 * @param {Object} title
+			 * @param {Object} content
+			 * @param {Object} status
+			 * @param {Object} crtime
+			 */
+			function showNotice(noticeId,title,content,status,crtime){
+				var notice = "<!DOCTYPE html><html><head><meta charset='UTF-8'><title></title></head>";
+				notice += "<body><div class='container-fluid'><div class='row mgt-10'><h4 class='text-center'><strong>"+ title +"</strong></h4></div>";
+				notice += "<div class='row mgt-10'><p class='text-center text-info'>发布时间："+ crtime +" &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+				if(status == 1){
+					notice += "状态：已读</p></div>";
+				}else{
+					var url = "/sd_baseData/notice/status?noticeId="+noticeId;
+					require(['ajaxUtil'], function(ajaxUtil){
+						ajaxUtil.doGet(url,function(data){
+							
+						});
+					});
+					notice += "状态：未读</p></div>";
+				}
+				notice += "<hr /><div class='row mgt-10'><div class='col-lg-10 col-md-10 col-sm-10 col-lg-offset-1 col-md-offset-1 col-sm-offset-1'><p class='text-warning text-justify'>";
+				notice += "&nbsp;&nbsp;&nbsp;&nbsp;" + content + "</p></div></div></div></body></html>";
+					
+				pageLayer.open({
+					type: 1,
+					closeBtn: 0,
+					title: title,
+					area: ['480px', '280px'],
+					shadeClose: true,
+					content: notice,
+					end: function(){
+						if(status != 1){
+							search(currentPage);
+						}
+					}
+				});
+			}
+		</script>
+	</body>
+</html>

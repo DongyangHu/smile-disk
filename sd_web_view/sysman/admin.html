@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>后台管理</title>
+		<!--#include file="/pub-page/sd_load_js.html" -->
+		<!--#include file="/pub-page/sd_load_css.html" -->		
+		<script type="text/javascript" src="../nresource/js/admin.js" ></script>
+	</head>
+	<body>
+		<div class="container-fluid">
+			<div class="layui-tab layui-tab-brief" lay-filter="tabList">
+			  <ul class="layui-tab-title">
+			    <li class="layui-this">用户管理</li>
+			    <li lay-id="applyList">站内消息</li>
+			  </ul>
+			  <div class="layui-tab-content">
+			  	<!-- 用户列表 -->
+			    <div class="layui-tab-item layui-show" id="tab1">
+			    	
+			    </div>
+			   <!-- 分页 -->
+				<div class="row">
+					<div id="pageDiv1" class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="display: none;"></div>
+				</div>
+				
+				<!-- 消息管理 -->
+			    <div class="layui-tab-item" id="tab2">
+					<div class="row">
+						<div class="col-lg-12 col-md-12 col-sm-12 mgt-10">
+							<div class="row mgb-10 mgt-10">
+								<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+									<div class="input-group">
+										<input type="text" id="noticeNameInput" class="form-control">
+										<span class="input-group-btn">
+											<button class="btn btn-default" onclick="search(1);">搜索</button>
+										</span>
+									</div>
+								</div>
+								<button class="layui-btn layui-btn-sm" onclick="publishNotice();">
+									<i class=" layui-icon">&#xe654;发布</i>
+								</button>
+							</div>
+							<div class="row">
+								<div class="col-lg-12" id="noticeList">
+									
+								</div>
+							</div>
+							<!-- 分页 -->
+							<div class="row">
+								<div id="pageDiv2" class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="display: none;"></div>
+							</div>					
+						</div>
+					</div>
+			   </div>		    
+			  </div>
+			</div>
+		</div>
+	</body>
+</html>

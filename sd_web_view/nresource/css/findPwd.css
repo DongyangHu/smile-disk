@@ -1,0 +1,28 @@
+.find-pwd-title{
+	text-align: center;
+	font-size: 16px;
+	color: #999999;
+}
+.find-pwd-div{
+	font-size: 12px;
+	color: #393D49;
+	width: 260px;
+	margin-bottom: 10px;
+}
+.important-text{
+	color: red;
+}
+.find-pwd-main-div{
+	width: 300px;
+	margin: 0 auto;
+}
+.find-pwd-main2-text{
+	font-size: 12px;
+	color: #393D49;
+}
+.find-pwd-main-right{
+	border: 1px solid #4CAE4C;
+}
+.find-pwd-main-error{
+	border: 1px solid #FD482C;
+}

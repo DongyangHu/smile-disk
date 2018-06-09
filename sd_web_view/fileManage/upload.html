@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>文件上传</title>
+		<!--#include file="/pub-page/sd_load_js.html" -->
+		<!--#include file="/pub-page/sd_load_css.html" -->
+	</head>
+	<body>
+		<div style="width: 320px; margin: 0 auto;" class="ele-border">
+			<div class="form-group">
+				<label for="inputfile">文件输入</label>
+				<input type="file" id="inputfile">
+					<p class="help-block">这里是块级帮助文本的实例。</p>
+				<input type="button" id="upload" value="上传"/>
+			</div>
+		</div>
+		<hr />
+		<div style="width: 320px; margin: 0 auto;" class="ele-border mgt-100">
+			<div class="form-group">
+				<label for="inputfile1">文件输入</label>
+				<input type="file" id="inputfile1">
+					<p class="help-block" id="info1">这里是块级帮助文本的实例。</p>
+				<input type="button" id="upload1" onclick="upladFile();" value="上传"/>
+			</div>
+		</div>
+	</body>
+	<script type="text/javascript">
+		var fileMaxSize = 524288000;
+		$(function(){
+			$("#upload").click(function(){
+				var uploadData = new FormData;
+				uploadData.append("file",$("#inputfile")[0].files[0]);
+				uploadData.append("param","参数")
+				$.ajax({
+					type:"post",
+					url:"/sd_fm/mvc/fileUpload/upload",
+					async:true,
+					data:uploadData,
+					contentType: false,
+					processData: false,
+					success:function(data){
+						alert(data);
+					},
+					error:function(){
+						alert("失败");
+					}
+				});
+			});
+		});
+		
+		function upladFile() {
+			if(!checkFileSize()){
+				return;
+			}
+            var url = "/sd_fm/mvc/fileUpload/upload";
+			var uploadData = new FormData;
+			uploadData.append("file",$("#inputfile1")[0].files[0]);
+			
+            // XMLHttpRequest 对象
+            var xhr = new XMLHttpRequest();
+            xhr.open("post", url, true);
+            xhr.onload = function () {
+               // alert("上传完成!");
+            };
+
+            xhr.upload.addEventListener("progress", progressFunction, false);
+            xhr.send(uploadData);
+        }
+
+        function progressFunction(evt) {
+            var info1 = document.getElementById("info1");
+            if (evt.lengthComputable) {
+                info1.innerHTML = Math.round(evt.loaded / evt.total * 100) + "%";
+                if(evt.loaded==evt.total){
+                    //alert("上传完成100%");
+                }
+            }
+        }
+        
+        function checkFileSize(){
+        	var size = $("#inputfile1")[0].files[0].size;
+        	if(size > fileMaxSize){
+        		alert("文件超过限制，只能上传500Mb以内的文件");
+        		return false;
+        	}
+        	return true;
+        }
+	</script>
+</html>
