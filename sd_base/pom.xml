@@ -17,7 +17,7 @@
         <slf4j.version>1.7.5</slf4j.version>
         <log4j.version>1.2.17</log4j.version>
         <!-- resteasy版本 -->
-        <resteasy.version>3.0.4.Final</resteasy.version>
+        <resteasy.version>3.14.0.Final</resteasy.version>
   </properties>
   
   <dependencies>
